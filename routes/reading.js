@@ -1,6 +1,7 @@
 // ./routes/reading.js
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
+var moment = require('moment');
 
 const GITHUB_REPO_OWNER = 'kenmjlee'
 const GITHUB_REPO_NAME = 'kenmjlee.github.io'
@@ -18,9 +19,8 @@ module.exports = (app) => {
                 return response.json()
             })
             .then((data) => {
-                    var pipelines = data.pipelines;
                     var notified = false;
-                    pipelines.forEach(element => {
+                    data.pipelines.forEach(element => {
                         if (PIPELINES_REGEXP.test(element.name) == true && element.issues.length == 0 && !notified ) {
                             notified = true;
                             return fetch(`https://hooks.slack.com/services/T1AMVNN6S/B8FPW9NF6/${SLACK_READINGHUB_TOKEN}`, {
@@ -38,6 +38,17 @@ module.exports = (app) => {
             );
             res.json({ message: 'notification sent'});
         }else if(action === 'create') {
+            fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/milestones?access_token=${GITHUB_TOKEN}`, {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json'},
+                 body: JSON.stringify({ "title": 'Sprint 0', 'description':'', 'due_on': moment().add(6, 'day').toISOString()}),
+            })
+            .then(function(response){
+                console.log(response);
+                return response.json();
+            })
+            .then(() => console.info(`[END] ${action} executed`))
+            .catch(err => res.json('error', { error: err }))
         }
 
         /// TODO: action=close, check at every friday what I still need to read. "Github"
