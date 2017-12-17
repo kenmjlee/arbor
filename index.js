@@ -7,6 +7,6 @@ var app = Express();
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-require('./routes/github')(app);
+require('./routes/reading')(app);
 
 module.exports = Webtask.fromExpress(app);

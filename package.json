@@ -13,6 +13,8 @@
       "body-parser": "^1.17.1",
       "express": "^4.15.2",
       "mongoose": "^4.9.5",
-      "webtask-tools": "^3.2.0"
+      "webtask-tools": "^3.2.0",
+      "es6-promise": "^4.1.1",
+      "isomorphic-fetch": "^2.2.1"
     }
   }
