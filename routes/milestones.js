@@ -1,4 +1,4 @@
-// ./routes/reading.js
+// ./routes/milestones.js
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 var moment = require('moment');
@@ -10,11 +10,11 @@ const PIPELINES_REGEXP = /backlog|reading|review/i;
 const ISSUEID_REGEXP = /issue\(\d+\)/ig;
 
 module.exports = (app) => {
-    app.post('/reading/milestone', (req, res) => {
+    app.post('/reading/milestones', (req, res) => {
         const { GITHUB_TOKEN, ZENHUB_TOKEN, SLACK_READINGHUB_TOKEN } = req.webtaskContext.secrets
         const { action, reqBody } = req.body;
         console.info(`[START] ${action} execute`)
-        if (action === 'tracking') {
+        if (action === 'track') {
             fetch(`https://api.zenhub.io/p1/repositories/${GITHUB_REPO_ID}/board?access_token=${ZENHUB_TOKEN}`)
             .then(function(response){
                 return response.json()
@@ -62,53 +62,4 @@ module.exports = (app) => {
         /// TODO: action=open, set those issues in backlog a milestone, and update the milestone start date, "Zenhub" + Github"
       }
     );
-    app.post('/reading/issues', (req, res) => {
-        const { GITHUB_TOKEN, ZENHUB_TOKEN, SLACK_READINGHUB_TOKEN } = req.webtaskContext.secrets
-        console.info(req.body);
-        const { action, reqBody } = req.body;
-        console.info(`[START] ${action} execute`)
-        if (action === 'archieved') {
-            
-        }else if (action === 'stared') {
-            retrieveIssueData(req, res).then(function(data){
-                console.log(data);
-            })
-        }else if (action === 'reviewed') {
-
-        }else if (action === 'estimate') {
-
-        }else if (action === 'prioritize') {
-
-        }
-        /// TODO: action=transfer, move a issue to specice pipeline. "Zenhub"
-        /// TODO: action=effort, set estimate to a issue. "Zenhub"
-        /// TODO: action=prioritize set labels to a issue. "Github"
-        res.json({ message: 'issue updated!' })
-      },
-    )
-}
-
-function retrieveIssueData(req, res){
-    const { GITHUB_TOKEN, ZENHUB_TOKEN, SLACK_READINGHUB_TOKEN } = req.webtaskContext.secrets
-    const { action, reqBody } = req.body;
-    var issueID = 0;
-    if (reqBody !== undefined && reqBody.tags.length > 0){
-        reqBody.tags.forEach(element => {
-            console.log(element)
-            console.log(ISSUEID_REGEXP.test(element));
-            //if (ISSUEID_REGEXP.test(element) == true){
-                console.log(typeof(element));
-                issueID = element.match(/\d+/ig);
-                console.log(issueID);
-            //}
-        })
-    }
-    res.json({message:"hi"});
-    //return  fetch(`https://api.zenhub.io/p1/repositories/${GITHUB_REPO_ID}/issues/${issueID}?access_token=${ZENHUB_TOKEN}`, {
-    //    method: 'GET',
-    //    headers: { 'Content-Type': 'application/json'}
-    // })
-    // .then(function(response){
-    //     return response.json()
-    // }).catch(err => res.json('error', { error: err }))
 }
