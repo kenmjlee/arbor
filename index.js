@@ -4,9 +4,11 @@ var Webtask = require('webtask-tools');
 var bodyParser = require('body-parser')
 var app = Express();
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(require('./middlewares/db').connectDisconnect);
 
-require('./routes/reading')(app);
+require('./routes/board')(app);
+require('./routes/issues')(app);
 
 module.exports = Webtask.fromExpress(app);
