@@ -9,11 +9,13 @@ module.exports = {
         });
     },
 
-    saveStorage: (req, res, data) => {
-        req.webtaskContext.storage.set(data, function(err){
-            if(err){
-                throw err;
-            }
-        }
+    saveStorage: (req, res, src, dst) => {
+        req.webtaskContext.storage.get(function (err, src) {
+            if (err) throw err;
+            src = src || dst;
+            req.webtaskContext.storage.set(src, function (err) {
+                if (err) throw err;
+            });
+        });
     },
 }

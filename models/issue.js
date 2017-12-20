@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 
 module.exports = new mongoose.Schema({
     githubIssueID: String,
-    pipelineID: String,
-    created_at: Date,
-    updated_at: Date,
+    pipelineName: String,
+    createdAt: Date,
+    updatedAt: Date,
     id: mongoose.Schema.ObjectId
 })

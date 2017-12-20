@@ -2,9 +2,9 @@
 const mongoose = require('mongoose');
 
 module.exports = new mongoose.Schema({
-    id: String,
-    name: String,
-    created_at: Date,
-    updated_at: Date,
+    pipelineID: String,
+    pipelineName: String,
+    createdAt: Date,
+    updatedAt: Date,
     id: mongoose.Schema.ObjectId
 })

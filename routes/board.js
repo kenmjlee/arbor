@@ -3,7 +3,8 @@ require('es6-promise').polyfill();
 require('isomorphic-fetch');
 var moment = require('moment');
 var mongoose = require('mongoose');
-const Pipeline = require('../models/pipeline');
+const Pipeline = require('../models/Pipeline');
+const SiteSetting = require('../models/SiteSetting');
 
 const GITHUB_REPO_OWNER = 'kenmjlee'
 const GITHUB_REPO_NAME = 'kenmjlee.github.io'
@@ -19,31 +20,20 @@ module.exports = (app) => {
             .then(function(response){
                 return response.json()
             })
-            .then(function(data){
-                data.pipelines.forEach(element => {
-                    console.info(element.id + " & " + element.name);
-                    req.PipelineModel.create(element, function (err, savedPipeline) {
-                        if (err) {
-                            res.json({ err: err });
-                            return;
-                        } else {
-                            //res.json({ bar: barCreated });
-                        }
-                    });
-                    //var newPipeline = new req.PipelineModel(Object.assign({}, {pipelineName:element.name, pipelineID:element.id ,created_at: Date.now()}));
-                    //console.info(newPipeline);
-                    // newPipeline.create((err, newPipeline) => {
-                    //     if (err){
-                    //         console.log(savedPipeline);
-                    //     }else{
-                    //         console.error(err);
-                    //     }
-                    // })
+            .then(function(src){
+                src.pipelines.forEach(element => {
+                    var newPipeline = new req.pipelineModel(Object.assign({}, {pipelineID:element.id, pipelineName:element.name}, {createdAt: Date.now()}));
+                    newPipeline.save((err, savedPipeline) => {
+                        if (err)
+                            console.error(err)
+                    })
                 })
-                
-                res.json({message: 'data created'});
             })
             .catch(err => res.json('error', { error: err }))  
+                    
+            SiteSetting.saveStorage(req, res, {}, {sprint:0});
+
+            res.json({message: 'data created'});
         }
     })
 }
