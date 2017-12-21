@@ -133,6 +133,6 @@ function retrieveLatestMilestone(src) {
             if (response.status >= 200 && response.status <= 300)
                 return response.json();
             else
-                new Promise.reject(new Error("Retrieve Pipeline Error"))
+            err => res.stauts(500).json({ error: "Error: Retrieve Latest Milestone" })
         })
 }
