@@ -1,19 +1,19 @@
 module.exports = {
-    getStorage: (req, res) => {
+    getStorage: (req, res, cb) => {
         req.webtaskContext.storage.get(function(err, data){
             if(!err){
-              return data
+              cb(data);
             } else {
               throw err;
             }
         });
     },
 
-    saveStorage: (req, res, src, dst) => {
-        req.webtaskContext.storage.get(function (err, src) {
+    saveStorage: (req, res, src) => {
+        req.webtaskContext.storage.get(function (err, data) {
             if (err) throw err;
-            src = src || dst;
-            req.webtaskContext.storage.set(src, function (err) {
+            var dst = Object.assign(data, src);
+            req.webtaskContext.storage.set(dst, function (err) {
                 if (err) throw err;
             });
         });

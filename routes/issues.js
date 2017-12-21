@@ -110,7 +110,7 @@ function moveIssueBetweenPipeline(req, res, src) {
     })
         .then(function (response) {
             console.info(response.status)
-            if (response.status === 200) {
+            if (response.status >= 200 || response.status <= 300 ) {
                 res.json({ message: 'issue move to done' });
             } else {
                 throw new Exception(response.json());

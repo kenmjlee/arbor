@@ -10,5 +10,6 @@ app.use(require('./middlewares/db').connectDisconnect);
 
 require('./routes/board')(app);
 require('./routes/issues')(app);
+require('./routes/milestones')(app);
 
 module.exports = Webtask.fromExpress(app);
