@@ -89,7 +89,7 @@ module.exports = (app) => {
 function getNumber(src, reg) {
     var retVal = 0;
     if (src !== undefined && src.tags.length > 0) {
-        src.tags.forEach(element => {
+        src.tags.split(',').forEach(element => {
             var isAvailable = reg.test(element);
             if (isAvailable) {
                 retVal = element.match(reg).toString().match(/\d+/ig);
