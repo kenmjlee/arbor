@@ -45,8 +45,11 @@ module.exports = (app) => {
 
                 console.info(`[START] show saved Issue`)
                 
-                if (targetIssue.pipeline.name === "In Progress" || 
-                        targetIssue.pipeline.name === 'Review') {
+                // if (targetIssue.pipeline.name === "In Progress" || 
+                //         targetIssue.pipeline.name === 'Review') {
+                if (targetIssue.pipeline.name !== "New Issues" && 
+                    targetIssue.pipeline.name !== 'Done' &&
+                    targetIssue.pipeline.name !== 'Closed') {
                         moveIssueBetweenPipeline(req, res, {issueID: issueID, pipelineID: targetPipeline.pipelineID});
                 } else {
                         res.status(200).json({ message: "No Issue Need To Be Moved" });
