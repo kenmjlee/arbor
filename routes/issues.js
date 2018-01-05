@@ -28,7 +28,12 @@ module.exports = (app) => {
         var targetIssue = null;
         var targetPipeline = null;
         var targetPipelineName = '';
-        
+        // Prepare issue and pipeline at the same time
+        if (action === 'stared'){
+            targetPipelineName = 'Review'
+        }else{
+            targetPipelineName = "Done"
+        }
         Promise.all([retrieveIssueData(req, res, issueID), retrievePipeline(req, res, targetPipelineName)])
             .then(results => {
                 targetIssue = results[0];
@@ -40,16 +45,8 @@ module.exports = (app) => {
 
                 console.info(`[START] show saved Issue`)
                 
-                // Only issue in "Backlog" or "In Progress" can be moved forward to review. Else, move it to done.
-                if ((targetIssue.pipeline.name === "In Progress" || 
-                        targetIssue.pipeline.name === 'Backlog') &&
-                        action === 'stared') {
-                            targetPipelineName = 'Review'
-                                // Prepare issue and pipeline at the same time
-                } else {
-                    targetPipelineName = "Done"
-                }
-                
+                // if (targetIssue.pipeline.name === "In Progress" || 
+                //         targetIssue.pipeline.name === 'Review') {
                 if (targetIssue.pipeline.name !== "New Issues" && 
                     targetIssue.pipeline.name !== 'Done' &&
                     targetIssue.pipeline.name !== 'Closed') {
