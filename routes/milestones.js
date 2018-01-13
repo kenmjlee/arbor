@@ -7,7 +7,7 @@ const SiteSetting = require('../models/SiteSetting');
 const GITHUB_REPO_OWNER = 'kenmjlee'
 const GITHUB_REPO_NAME = 'kenmjlee.github.io'
 const GITHUB_REPO_ID = 22687646;
-const PIPELINES_REGEXP = /backlog|reading|review/i;
+const PIPELINES_REGEXP = /backlog|in progress|reading|review/i;
 const ISSUEID_REGEXP = /issue\(\d+\)/ig;
 
 module.exports = (app) => {
@@ -18,12 +18,15 @@ module.exports = (app) => {
         if (action === 'track') {
             fetch(`https://api.zenhub.io/p1/repositories/${GITHUB_REPO_ID}/board?access_token=${ZENHUB_TOKEN}`)
                 .then(function (response) {
+                    console.info('Get Issues Success!')
                     return response.json()
                 })
                 .then(function (data) {
                     var notified = false;
                     data.pipelines.forEach(element => {
+                        console.info(`Element Info: ${element}`);
                         if (PIPELINES_REGEXP.test(element.name) == true && element.issues.length == 0 && !notified) {
+                            console.info('Send Notification Via Slack')
                             notified = true;
                             fetch(`https://hooks.slack.com/services/T1AMVNN6S/B8FPW9NF6/${SLACK_READINGHUB_TOKEN}`, {
                                 method: 'POST',
@@ -37,8 +40,11 @@ module.exports = (app) => {
                                 else
                                     err => res.stauts(500).json({ error: "Error: Track Milestone" })
                             })
-                            .then(() => console.info(`[END] notfication ${action} executed`))
+                            .then(() => {console.info(`[END] notfication ${action} executed`); res.json({ message: "Have Some Shits Need To be Done" })})
                             .catch(err => res.json('error', { error: err }))
+                        }
+                        else {
+                            ret => res.json({ message: "All Shits Done" })
                         }
                     })
                 })
@@ -58,18 +64,18 @@ module.exports = (app) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ "title": `Sprint ${sprintNumber}`, 'description': '', 'due_on': moment().add(6, 'day').toISOString() }),
                 })
-                    .then(function (response) {
-                        console.info(response.status);
-                        if (response.status >= 200 && response.status <= 300)
-                            return response.json();
-                        else
-                            err => res.stauts(500).json({ error: "Error: Create Milestone" })
+                .then(function (response) {
+                    console.info(response.status);
+                    if (response.status >= 200 && response.status <= 300)
+                        return response.json();
+                    else
+                        err => res.stauts(500).json({ error: "Error: Create Milestone" })
                     })
-                    .then((src) => {
-                        SiteSetting.saveStorage(req, res, { sprint: sprintNumber, sprint_number: src.number });
-                        res.json({ message: 'milestone created' });
-                    })
-                    .catch(err => res.json('error', { error: err }))
+                .then((src) => {
+                    SiteSetting.saveStorage(req, res, { sprint: sprintNumber, sprint_number: src.number });
+                    res.json({ message: 'milestone created' });
+                })
+                .catch(err => res.json('error', { error: err }))
             });
         } else if (action === 'open') {
             // the milestone always opened, this block just reset the start date
