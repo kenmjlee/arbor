@@ -47,6 +47,7 @@ module.exports = (app) => {
                             ret => res.json({ message: "All Shits Done" })
                         }
                     })
+                    res.json({ message: "Waiting Notification" });
                 })
                 .catch(err => res.json('error', { error: err }))
         } else if (action === 'create') {
